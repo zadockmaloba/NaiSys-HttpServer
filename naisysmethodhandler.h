@@ -2,6 +2,7 @@
 #define NAISYS_NAISYSMETHODHANDLER_H
 
 #include <QObject>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include "systemconfig.h"

@@ -4,6 +4,7 @@
 #define __doc_dir__ QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
 
 #include <QObject>
+#include <QDebug>
 #include <QStandardPaths>
 #include <QFile>
 #include <QDir>

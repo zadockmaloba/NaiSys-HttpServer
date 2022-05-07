@@ -40,8 +40,8 @@ void ConnectionThread::run()
     QObject::connect(m_tcpSocket, &QTcpSocket::connected, this, &ConnectionThread::onConnected);
     QObject::connect(m_tcpSocket, &QIODevice::readyRead, this, &ConnectionThread::onReadyRead);
     QObject::connect(m_tcpSocket, &QTcpSocket::disconnected, this, &ConnectionThread::onDisconnected);
-    QObject::connect(m_tcpSocket, &QTcpSocket::errorOccurred, this, &ConnectionThread::onErrorOccurred);
-    QObject::connect(m_tcpSocket, &QTcpSocket::proxyAuthenticationRequired, this, &ConnectionThread::onProxyAuthenticationRequired);
+    //QObject::connect(m_tcpSocket, &QTcpSocket::errorOccurred, this, &ConnectionThread::onErrorOccurred);
+    //QObject::connect(m_tcpSocket, &QTcpSocket::proxyAuthenticationRequired, this, &ConnectionThread::onProxyAuthenticationRequired);
     exec();
 }
 

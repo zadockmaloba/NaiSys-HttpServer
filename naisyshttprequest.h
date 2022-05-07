@@ -2,6 +2,7 @@
 #define NAISYS_NAISYSHTTPREQUEST_H
 
 #include <QObject>
+#include <QDebug>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonValue>
