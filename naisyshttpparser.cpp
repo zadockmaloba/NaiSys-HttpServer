@@ -25,11 +25,13 @@ QByteArray NaiSysHttpParser::renderHttp() const //TODO: Avoid copying
     }
     else if (jsObj.value("Method").toString() == "POST"){
         qDebug() << "POST Request";
-        return QByteArray();
+        auto const v = NaiSysMethodHandler().post(jsObj.value("Path").toString(), m_desirialized._body);
+
+        return v;
     }
     else if (jsObj.value("Method").toString() == "PUT"){
         qDebug() << "PUT Request";
-        return QByteArray();
+        return QByteArray("Resp");
     }
     return QByteArray();
 }

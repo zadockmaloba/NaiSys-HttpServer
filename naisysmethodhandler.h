@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QString>
 #include "systemconfig.h"
 
 namespace NaiSys {
@@ -15,7 +16,7 @@ class NaiSysMethodHandler : public QObject
 public:
     explicit NaiSysMethodHandler(QObject *parent = nullptr);
     const QByteArray& get(const QString &path);
-    const QByteArray& post(const QString &path, const QByteArray& data)const;
+    const QByteArray& post(const QString &path, const QByteArray& data);
     const QByteArray& put() const;
 
 signals:
