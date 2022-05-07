@@ -25,9 +25,9 @@ private:
     QByteArray m_byteData;
     QMap <QString, QString> m_routingTable = {
         {"/", SystemConfig::readConfigFile().value("Landing-Page").toString()},
-        {"index", SystemConfig::readConfigFile().value("Landing-Page").toString()}
+        {"index", SystemConfig::readConfigFile().value("Landing-Page").toString()},
+	{"/favicon.ico", SystemConfig::readConfigFile().value("Landing-Page").toString()}
     };
-
 };
 
 } // namespace NaiSys
