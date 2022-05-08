@@ -14,7 +14,7 @@ void sslConnectionThread::run()
     QSslSocket m_sslSocket;
 
     m_sslSocket.setLocalCertificate(SystemConfig::readConfigFile().value("Ssl-Cert").toString());
-    m_sslSocket.setPrivateKey(SystemConfig::readConfigFile().value("Ssl-Cert").toString());
+    m_sslSocket.setPrivateKey(SystemConfig::readConfigFile().value("Ssl-Key").toString());
 
     if(!m_sslSocket.setSocketDescriptor(m_descriptor)){
         qDebug() << (m_sslSocket.errorString());
