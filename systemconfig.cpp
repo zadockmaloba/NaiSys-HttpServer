@@ -29,11 +29,15 @@ const QJsonObject SystemConfig::m_sInitData = {
     {"App-Name", QJsonValue("Default")},
     {"Address", QJsonValue("localhost")},
     {"Port", QJsonValue("1234")},
+    {"HTTPs-Address", QJsonValue("localhost")},
+    {"HTTPs-Port", QJsonValue("443")},
     {"Root-Dir", QJsonValue("www")},
     {"Landing-Page", QJsonValue("index.html")},
     {"DataBase", QJsonValue("test")},
     {"Post-Dir", QJsonValue("post")},
-    {"Put-Dir", QJsonValue("put")}
+    {"Put-Dir", QJsonValue("put")},
+    {"Ssl-Cert", QJsonValue("/root/cert.pem")},
+    {"Ssl-Key", QJsonValue("/root/key.pem")}
 };
 
 bool SystemConfig::checkForFile(const QString &filename)
