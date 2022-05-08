@@ -7,14 +7,11 @@
 #include <QTcpServer>
 #include <QObject>
 
+#include "naisysdefs.h"
 #include "connectionthread.h"
 #include "systemconfig.h"
 
 namespace NaiSys {
-struct ServerAddress{
-    int _listen_port = 80;
-    QString _listen_address = "127.0.0.1";
-};
 
 class NaiSysHttpServer : public QTcpServer
 {
