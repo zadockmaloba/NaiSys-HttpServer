@@ -73,13 +73,12 @@ void ConnectionThread::onReadyRead()
     _parse.setDesirialized(*_req.getDesirialized());
     auto const _a = _parse.renderHttp();
 
-    QFile m_file(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)+"/HttpServer/test.html");
-
     NaiSysHttpResponse _resp;
     _resp.setHttpBody(_a);
     _resp.setRawHeader("Connection", "keep-alive");
     _resp.setRawHeader("Content-Length", QByteArray::number(_a.size()));
     m_tcpSocket->write(_resp.toByteArray());
+    m_tcpSocket->flush();
 }
 
 void ConnectionThread::onConnected()
@@ -89,8 +88,8 @@ void ConnectionThread::onConnected()
 
 void ConnectionThread::onDisconnected()
 {
+    auto const m_tcpSocket = qobject_cast<QTcpSocket*> (sender());
     m_tcpSocket->close();
-    m_tcpSocket->deleteLater();
     qDebug() << "Socket Closed Successfully";
     this->exit(0);
 }
