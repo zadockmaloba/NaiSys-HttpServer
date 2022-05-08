@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include "naisyshttpserver.h"
+#include "naisyshttpsserver.h"
 #include "systemconfig.h"
 
 int main(int argc, char *argv[])
@@ -12,6 +13,12 @@ int main(int argc, char *argv[])
                 );
 
     httpServer.startServer();
+
+    NaiSys::NaiSysHttpsServer serv2(
+                {config.value("HTTPs-Port").toString().toInt(), config.value("HTTPs-Address").toString()}
+                );
+
+    serv2.startServer();
 
     return a.exec();
 }
