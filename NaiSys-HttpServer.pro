@@ -15,7 +15,9 @@ SOURCES += \
         naisyshttprequest.cpp \
         naisyshttpresponse.cpp \
         naisyshttpserver.cpp \
+        naisyshttpsserver.cpp \
         naisysmethodhandler.cpp \
+        sslconnectionthread.cpp \
         systemconfig.cpp
 
 # Default rules for deployment.
@@ -30,5 +32,7 @@ HEADERS += \
     naisyshttprequest.h \
     naisyshttpresponse.h \
     naisyshttpserver.h \
+    naisyshttpsserver.h \
     naisysmethodhandler.h \
+    sslconnectionthread.h \
     systemconfig.h
