@@ -23,13 +23,11 @@ class ConnectionThread : public QThread
 public:
     explicit ConnectionThread(const qintptr descriptor, QObject *parent = nullptr);
     void run();
+
     int listenPort() const;
     void setListenPort(int newListenPort);
     const QString &listenAddress() const;
     void setListenAddress(const QString &newListenAddress);
-
-    QTcpSocket *tcpSocket() const;
-    void setTcpSocket(QTcpSocket *newTcpSocket);
 
 private slots:
     //IODevice signals
@@ -48,8 +46,6 @@ private slots:
     void onStateChanged(QAbstractSocket::SocketState socketState);
 
 private:
-    //std::unique_ptr<QTcpSocket> m_tcpSocket;
-    QTcpSocket *m_tcpSocket;
     qintptr m_descriptor;
     int m_listenPort;
     QString m_listenAddress;
