@@ -5,14 +5,8 @@ ConnectionThread::ConnectionThread(const qintptr descriptor,QObject *parent)
     : QThread{parent},
       m_descriptor{descriptor}
 {
-    this->setParent(parent);
+
 }
-
-QTcpSocket *ConnectionThread::tcpSocket() const
-{return m_tcpSocket;}
-
-void ConnectionThread::setTcpSocket(QTcpSocket *newTcpSocket)
-{m_tcpSocket = newTcpSocket;}
 
 int ConnectionThread::listenPort() const
 {return m_listenPort;}
