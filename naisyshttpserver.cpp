@@ -17,8 +17,10 @@ NaiSysHttpServer::NaiSysHttpServer(const ServerAddress &lAddr, QObject *parent)
 
 bool NaiSysHttpServer::startServer()
 {
-    if(!this->listen(QHostAddress(m_listenAddress), m_listenPort))
+    if(!this->listen(QHostAddress(m_listenAddress), m_listenPort)){
         qDebug() << nErrorLog"Server Failed To Start.";
+        return false;
+    }
     else {
         qDebug() << nMsgLog"Server Started Succesfully";
         qDebug() << nMsgLog"Listening on [Addr]: "
