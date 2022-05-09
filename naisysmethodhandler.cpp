@@ -24,9 +24,19 @@ const QByteArray &NaiSysMethodHandler::get(const QString &path)
 
 const QByteArray &NaiSysMethodHandler::post(const QString &path, const QByteArray &data)
 {
+    auto const db = new DatabaseHandler;
+    auto const jObj = QJsonDocument::fromJson(data).object();
+    auto const v  = QString(path).replace("/","");
+
+    db->setDbName(SystemConfig::getRootWebSiteFolder()
+                 +SystemConfig::readConfigFile().value("DataBase").toString());
+    db->setDbConnectionName(QString::number(rand()));
+    db->initialiseDb();
+
+    db->createAndOrInsertRowToTable(v, jObj);
+
     this->m_byteData = QByteArray("");
-    auto v  = QString(path);
-    v.replace("/","");
+
     QFile put_file(SystemConfig::getRootWebSiteFolder()
                    +SystemConfig::readConfigFile().value("Post-Dir").toString()+'_'+v+'_'+QString::number(rand()));
 

@@ -8,6 +8,8 @@
 #include <QString>
 #include "systemconfig.h"
 
+#include "databasehandler.h"
+
 namespace NaiSys {
 
 class NaiSysMethodHandler : public QObject

@@ -1,5 +1,5 @@
 QT -= gui
-QT += core network
+QT += core network sql
 
 CONFIG += c++17 console
 CONFIG -= app_bundle
@@ -10,6 +10,7 @@ CONFIG -= app_bundle
 
 SOURCES += \
         connectionthread.cpp \
+        databasehandler.cpp \
         main.cpp \
         naisyshttpparser.cpp \
         naisyshttprequest.cpp \
@@ -27,6 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     connectionthread.h \
+    databasehandler.h \
     naisysdefs.h \
     naisyshttpparser.h \
     naisyshttprequest.h \

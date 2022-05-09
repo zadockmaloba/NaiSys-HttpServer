@@ -33,7 +33,7 @@ const QJsonObject SystemConfig::m_sInitData = {
     {"HTTPs-Port", QJsonValue("443")},
     {"Root-Dir", QJsonValue("www")},
     {"Landing-Page", QJsonValue("index.html")},
-    {"DataBase", QJsonValue("test")},
+    {"DataBase", QJsonValue("test.sqlite")},
     {"Post-Dir", QJsonValue("post")},
     {"Put-Dir", QJsonValue("put")},
     {"Ssl-Cert", QJsonValue("/root/cert.pem")},
