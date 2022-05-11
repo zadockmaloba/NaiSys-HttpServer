@@ -44,7 +44,10 @@ const QByteArray &NaiSysMethodHandler::post(const QString &path, const QByteArra
     if(put_file.open(QIODevice::WriteOnly)){
         put_file.write(data);
         put_file.close();
-        m_byteData = QByteArray("{Message: Received successfully}");
+        m_byteData = QByteArray(QJsonDocument(QJsonObject({
+                                                {"ResultCode", QJsonValue(0)},
+                                                {"ResultDesc", QJsonValue("Accepted")}
+                                            })).toJson());
     }
     else qDebug() << "File can't opened";
     return m_byteData;
