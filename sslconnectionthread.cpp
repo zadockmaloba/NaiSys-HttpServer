@@ -28,7 +28,7 @@ void sslConnectionThread::run()
     QObject::connect(&m_sslSocket, &QSslSocket::connected, this, &sslConnectionThread::onConnected);
     QObject::connect(&m_sslSocket, &QIODevice::readyRead, this, &sslConnectionThread::onReadyRead);
     QObject::connect(&m_sslSocket, &QSslSocket::disconnected, this, &sslConnectionThread::onDisconnected);
-    //QObject::connect(m_sslSocket, &QSslSocket::errorOccurred, this, &sslConnectionThread::onErrorOccurred);
+    QObject::connect(&m_sslSocket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
     //QObject::connect(m_sslSocket, &QSslSocket::proxyAuthenticationRequired, this, &sslConnectionThread::onProxyAuthenticationRequired);
     exec();
 }
@@ -116,6 +116,8 @@ void sslConnectionThread::onDisconnected()
 
 void sslConnectionThread::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
+    auto const _b = qobject_cast<QSslSocket*> (sender());
+    qDebug() << "ERROR: " << _b->errorString() << "PORT: " << _b->localPort();
     qDebug() << socketError;
 }
 

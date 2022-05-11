@@ -33,7 +33,7 @@ void ConnectionThread::run()
     QObject::connect(&m_tcpSocket, &QTcpSocket::connected, this, &ConnectionThread::onConnected);
     QObject::connect(&m_tcpSocket, &QIODevice::readyRead, this, &ConnectionThread::onReadyRead);
     QObject::connect(&m_tcpSocket, &QTcpSocket::disconnected, this, &ConnectionThread::onDisconnected);
-    //QObject::connect(m_tcpSocket, &QTcpSocket::errorOccurred, this, &ConnectionThread::onErrorOccurred);
+    QObject::connect(&m_tcpSocket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
     //QObject::connect(m_tcpSocket, &QTcpSocket::proxyAuthenticationRequired, this, &ConnectionThread::onProxyAuthenticationRequired);
     exec();
 }
@@ -96,6 +96,8 @@ void ConnectionThread::onDisconnected()
 
 void ConnectionThread::onErrorOccurred(QAbstractSocket::SocketError socketError)
 {
+    auto const _b = qobject_cast<QTcpSocket*> (sender());
+    qDebug() << "ERROR: " << _b->errorString() << "PORT: " << _b->localPort();
     qDebug() << socketError;
 }
 
