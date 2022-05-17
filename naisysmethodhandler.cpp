@@ -132,6 +132,7 @@ const NaiSysHttpResponse MethodHandler::post()
                     .createAndOrInsertRowToTable(path,jObj);
 
             qDebug() << "[JSON POST STATUS]: "<< resp;
+            qDebug() << "[JSON HEADER]: "<< m_desirialized._header;
             qDebug() << "[DESIRIALIZED_BODY]: "<<m_desirialized._body;
 
             QFile put_file(SystemConfig::getRootWebSiteFolder()
