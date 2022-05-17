@@ -87,6 +87,7 @@ void sslConnectionThread::onReadyRead()
 {
     auto const m_sslSocket = qobject_cast<QSslSocket*> (sender());
     auto const _b = m_sslSocket->readAll();
+    qDebug() << _b;
     m_sslSocket->flush();
 
     auto const reqst = NaiSysHttpRequest(_b);

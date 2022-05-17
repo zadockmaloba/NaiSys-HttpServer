@@ -134,7 +134,8 @@ const NaiSysHttpResponse MethodHandler::post()
             qDebug() << "[JSON POST STATUS]: "<< resp;
 
             QFile put_file(SystemConfig::getRootWebSiteFolder()
-                               +SystemConfig::readConfigFile().value("Post-Dir").toString()+'_'+path+'_'+QString::number(rand()));
+                               +SystemConfig::readConfigFile()
+                           .value("Post-Dir").toString()+'_'+path+'_'+QDateTime::currentDateTime().toString());
 
             qDebug() << put_file.fileName();
                 if(put_file.open(QIODevice::WriteOnly)){

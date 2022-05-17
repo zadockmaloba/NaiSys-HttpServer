@@ -67,6 +67,7 @@ void ConnectionThread::onReadyRead()
 {
     auto const m_tcpSocket = qobject_cast<QTcpSocket*> (sender());
     auto const _b = m_tcpSocket->readAll();
+    qDebug() << _b;
     m_tcpSocket->flush();
 
     auto const reqst = NaiSysHttpRequest(_b);

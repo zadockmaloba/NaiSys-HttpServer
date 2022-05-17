@@ -15,6 +15,7 @@
 #include "servercalls.h"
 
 #include "naisysjsonobject.h"
+#include <QDateTime>
 
 namespace NaiSys {
 
