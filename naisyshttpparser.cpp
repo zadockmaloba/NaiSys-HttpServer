@@ -25,6 +25,7 @@ HttpParser::HttpParser(const NaiSysHttpResponse &response)
 
 const NaiSysHttpResponse HttpParser::renderHttp()
 {
+    qDebug() << m_desirialized._raw_header;
     if(m_desirialized._header.value("Method").toString() == "POST"){
         qDebug() << "POST METHOD";
         return NaiSys::MethodHandler(m_desirialized).post();
