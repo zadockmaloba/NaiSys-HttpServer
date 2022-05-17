@@ -13,7 +13,9 @@ NaiSysHttpRequest::NaiSysHttpRequest(const QByteArray &data)
     qDebug() << "[REQUEST CHUNKS]: "<< a.size();
     if( a.size() > 1 ){
         m_header = a[0].toUtf8();
+        qDebug() << "HTTPREQUEST_HEADER : " << "__@@ "<<m_header;
         m_body = a[1].toUtf8();
+        qDebug() << "HTTPREQUEST_BODY : " << "__@@ "<<m_body;
     }
 }
 
