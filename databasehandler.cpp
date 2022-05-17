@@ -94,11 +94,8 @@ QSqlQueryModel *DatabaseHandler::runSqlQuerry(const QString &querry)
 {
     this->openDatabaseSocket();
     auto m_model = new QSqlQueryModel; //TODO: Fix leak
-    QSqlQuery m_query(m_dbHandle);
-    m_model->setQuery(m_query);
-    (m_query.exec(querry)) ? qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: Run successful":
-                             qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: "<< m_query.lastError();
-    m_dbHandle.commit();
+    m_model->setQuery(querry, m_dbHandle);
+    qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: "<< m_model->lastError().text();
     this->closeDatabaseSocket();
     return m_model;
 }
