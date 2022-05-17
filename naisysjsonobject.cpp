@@ -33,8 +33,7 @@ QByteArray NaiSysJsonObject::qryModelToJson(const QSqlQueryModel *mdl, [[maybe_u
 QStringList NaiSysJsonObject::jsonDocToStringArr(const QByteArray &_data)
 {
     QJsonParseError jErr; QStringList _ret;
-    const auto _slice = _data.sliced(6); //TODO: Find a dynamic way to do this incase of change in data size bytes
-    const auto var1 = QJsonDocument::fromJson(_slice, &jErr).array().toVariantList();
+    const auto var1 = QJsonDocument::fromJson(_data, &jErr).array().toVariantList();
     qDebug() <<"[jsonDocToStringArr(const QByteArray &_data)] "<<jErr.errorString();
     const auto var2 = var1.at(0).toMap().values();
     for(auto &v : var2) _ret.append(v.toString());
