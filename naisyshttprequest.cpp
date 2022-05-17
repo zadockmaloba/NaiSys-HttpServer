@@ -10,6 +10,7 @@ NaiSysHttpRequest::NaiSysHttpRequest()
 NaiSysHttpRequest::NaiSysHttpRequest(const QByteArray &data)
 {
     auto const a = QString::fromUtf8(data).split("\r\n\r\n");
+    qDebug() << "[REQUEST CHUNKS]: "<< a.size();
     if( a.size() > 1 ){
         m_header = a[0].toUtf8();
         m_body = a[1].toUtf8();
