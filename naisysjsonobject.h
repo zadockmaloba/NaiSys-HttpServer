@@ -1,6 +1,7 @@
 #ifndef NAISYS_NAISYSJSONOBJECT_H
 #define NAISYS_NAISYSJSONOBJECT_H
 
+#include <QDebug>
 #include <QObject>
 #include <QJsonArray>
 #include <QJsonDocument>

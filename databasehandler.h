@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QSqlError>
+#include <QDebug>
 
 #include "systemconfig.h"
 
