@@ -135,7 +135,7 @@ const NaiSysHttpResponse MethodHandler::post()
 
             QFile put_file(SystemConfig::getRootWebSiteFolder()
                                +SystemConfig::readConfigFile()
-                           .value("Post-Dir").toString()+'_'+path+'_'+QDateTime::currentDateTime().toString());
+                           .value("Post-Dir").toString()+'_'+path+'_'+QDateTime::currentDateTime().toString().replace(" ","_"));
 
             qDebug() << put_file.fileName();
                 if(put_file.open(QIODevice::WriteOnly)){
