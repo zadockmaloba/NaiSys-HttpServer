@@ -68,17 +68,10 @@ void ConnectionThread::onReadyRead()
     auto const m_tcpSocket = qobject_cast<QTcpSocket*> (sender());
     auto const _b = m_tcpSocket->readAll();
     m_tcpSocket->flush();
-    NaiSysHttpRequest _req(_b);
-    NaiSysHttpParser _parse;
-    _parse.setDesirialized(*_req.getDesirialized());
-    auto const _a = _parse.renderHttp();
 
-    NaiSysHttpResponse _resp;
-    _resp.setHttpBody(_a);
-    _resp.setRawHeader("Connection", "keep-alive");
-    _resp.setRawHeader("Content-Length", QByteArray::number(_a.size()));
-    m_tcpSocket->write(_resp.toByteArray());
-    m_tcpSocket->flush();
+    auto const reqst = NaiSysHttpRequest(_b);
+    auto resp = HttpParser(reqst).renderHttp();
+    m_tcpSocket->write(resp.toByteArray());
 }
 
 void ConnectionThread::onConnected()

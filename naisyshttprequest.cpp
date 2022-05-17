@@ -2,43 +2,60 @@
 
 namespace NaiSys {
 
+NaiSysHttpRequest::NaiSysHttpRequest()
+{
+
+}
+
 NaiSysHttpRequest::NaiSysHttpRequest(const QByteArray &data)
 {
-    QJsonObject jsObj;
-    auto const _a = QString::fromUtf8(data).split("\r\n\r\n");
-    if(_a.size() >= 2){
-        this->m_rawHeader = _a[0].toUtf8(); this->m_rawBody = _a[1].toUtf8();
-        auto const _b = _a[0].split("\r\n");
-        {
-            auto const _d = _b[0].split(" ");
-            if(_d.size() == 3){
-                jsObj.insert("Method", _d[0]);
-                jsObj.insert("Path", _d[1]);
-                jsObj.insert("Protocol", _d[2]);
-
-                for(int i=0; i<_b.size()-1; ++i){
-                    auto const _c = _b[i+1].split(":");
-                    jsObj.insert(_c[0], QJsonValue(_c[1]));
-                }
-            }
-        }
+    auto const a = QString::fromUtf8(data).split("\r\n\r\n");
+    if( a.size() > 1 ){
+        m_header = a[0].toUtf8();
+        m_body = a[1].toUtf8();
     }
-    m_headerJson = jsObj;
-    qDebug() << m_headerJson;
 }
 
-const DesirializedData *NaiSysHttpRequest::getDesirialized() const
+NaiSysHttpRequest::NaiSysHttpRequest(const QByteArray &header, const QByteArray &body)
+    : m_header{header},
+      m_body{body}
 {
-    return new DesirializedData{m_headerJson, m_rawBody};
+
 }
 
-const QByteArray &NaiSysHttpRequest::rawHeader() const
-{return m_rawHeader;}
+void NaiSysHttpRequest::appendDefinedHeader(const int eHeader, const QByteArray &value)
+{
+    switch (eHeader) {
+    case DefinedHeaders::ContentType :
+        appendRawHeader("Content-Type", value);
+        break;
+    case DefinedHeaders::ContentLength:
+        appendRawHeader("Content-Length", value);
+        break;
+    case DefinedHeaders::Authorization:
+        appendRawHeader("Authorization", value.toBase64());
+        break;
+    case DefinedHeaders::Cookies:
+        appendRawHeader("Cookie", value);
+        break;
+    }
+}
 
-const QByteArray &NaiSysHttpRequest::rawBody() const
-{return m_rawBody;}
+void NaiSysHttpRequest::appendRawHeader(const QByteArray &key, const QByteArray &value)
+{
+    m_header.append(key+": "+value+"\r\n");
+}
 
-const QJsonObject &NaiSysHttpRequest::headerJson() const
-{return m_headerJson;}
+const QByteArray &NaiSysHttpRequest::header() const
+{return m_header;}
+
+void NaiSysHttpRequest::setHeader(const QByteArray &newHeader)
+{m_header = newHeader;}
+
+const QByteArray &NaiSysHttpRequest::body() const
+{return m_body;}
+
+void NaiSysHttpRequest::setBody(const QByteArray &newBody)
+{m_body = newBody;}
 
 } // namespace NaiSys

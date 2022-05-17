@@ -2,60 +2,201 @@
 
 namespace NaiSys {
 
-NaiSysMethodHandler::NaiSysMethodHandler(QObject *parent)
-    : QObject{parent}
+MethodHandler::MethodHandler()
 {
+
 }
 
-const QByteArray &NaiSysMethodHandler::get(const QString &path)
+MethodHandler::MethodHandler(const DesirializedData &data)
+    : m_desirialized{data}
 {
-    qDebug() << path;
-    QString _path;
-    _path = (m_routingTable[path] != "") ?
-                SystemConfig::getRootWebSiteFolder()+m_routingTable[path] :
-                SystemConfig::getRootWebSiteFolder()+m_routingTable["/"];
 
-    QFile _file(_path);
-    _file.open(QIODevice::ReadOnly);
-    m_byteData = _file.readAll();
-    _file.close();
-    return m_byteData;
 }
 
-const QByteArray &NaiSysMethodHandler::post(const QString &path, const QByteArray &data)
+const NaiSysHttpResponse MethodHandler::get()
 {
-    auto const db = new DatabaseHandler;
-    auto const jObj = QJsonDocument::fromJson(data).object();
-    auto const v  = QString(path).replace("/","");
+    if(m_desirialized._header.value("Content-Length").toString().toInt() > 0)
+    {
+        if(m_desirialized._header.value("Content-Type")
+                .toString().contains("naisys/sql"))
+        {
+            qDebug() << "sql request";
 
-    db->setDbName(SystemConfig::getRootWebSiteFolder()
-                 +SystemConfig::readConfigFile().value("DataBase").toString());
-    db->setDbConnectionName(QString::number(rand()));
-    db->initialiseDb();
+            auto const qrymdl = DatabaseHandler(QString::number(rand()),
+                                                SystemConfig::getRootWebSiteFolder()
+                                                +SystemConfig::readConfigFile().value("DataBase").toString())
+                    .runSqlQuerry(QString::fromUtf8(m_desirialized._body));
+            auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
 
-    db->createAndOrInsertRowToTable(v, jObj);
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("naisys/nsquerry"))
+        {
+            qDebug() << "custom request";
 
-    this->m_byteData = QByteArray("");
+            auto const qry = this->querryParser(m_desirialized._body);
+            auto const qrymdl = DatabaseHandler(QString::number(rand()),
+                                                SystemConfig::getRootWebSiteFolder()
+                                                +SystemConfig::readConfigFile().value("DataBase").toString())
+                    .runSqlQuerry(*qry);
+            auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
 
-    QFile put_file(SystemConfig::getRootWebSiteFolder()
-                   +SystemConfig::readConfigFile().value("Post-Dir").toString()+'_'+v+'_'+QString::number(rand()));
-
-    qDebug() << put_file.fileName();
-    if(put_file.open(QIODevice::WriteOnly)){
-        put_file.write(data);
-        put_file.close();
-        m_byteData = QByteArray(QJsonDocument(QJsonObject({
-                                                {"ResultCode", QJsonValue(0)},
-                                                {"ResultDesc", QJsonValue("Accepted")}
-                                            })).toJson());
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("application/json"))
+        {
+            qDebug() << "json request";
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", "<h1> NaiSys | Server </h1>");//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/plain");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("text/plain"))
+        {
+            qDebug() << "json request";
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", "<h1> NaiSys | Server </h1>");//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/plain");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
     }
-    else qDebug() << "File can't opened";
-    return m_byteData;
+    return NaiSysHttpResponse("HTTP/1.1 400 Bad\r\n", "");
 }
 
-const QByteArray &NaiSysMethodHandler::put() const
+const NaiSysHttpResponse MethodHandler::post()
 {
-    return m_byteData;
+    if(m_desirialized._header.value("Content-Length").toString().toInt() > 0)
+    {
+        if(m_desirialized._header.value("Content-Type")
+                .toString().contains("naisys/sql"))
+        {
+            qDebug() << "sql request";
+
+            auto const qrymdl = DatabaseHandler(QString::number(rand()),
+                                                SystemConfig::getRootWebSiteFolder()
+                                                +SystemConfig::readConfigFile().value("DataBase").toString())
+                    .runSqlQuerry(QString::fromUtf8(m_desirialized._body));
+            auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
+
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("naisys/nsquerry"))
+        {
+            qDebug() << "custom request";
+
+            auto const qry = this->querryParser(m_desirialized._body);
+            auto qrymdl = DatabaseHandler(QString::number(rand()),
+                                                SystemConfig::getRootWebSiteFolder()
+                                                +SystemConfig::readConfigFile().value("DataBase").toString())
+                    .runSqlQuerry(*qry);
+            auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
+
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("application/json"))
+        {
+            qDebug() << "json request";
+
+            QByteArray m_byteData;
+
+            auto const path = m_desirialized._header.value("Path").toString().replace("/", "");
+
+            auto const jObj = QJsonDocument::fromJson(m_desirialized._body).object();
+
+            auto const resp = DatabaseHandler(QString::number(rand()),
+                                                SystemConfig::getRootWebSiteFolder()
+                                                +SystemConfig::readConfigFile().value("DataBase").toString())
+                    .createAndOrInsertRowToTable(path,jObj);
+
+            qDebug() << "[JSON POST STATUS]: "<< resp;
+
+            QFile put_file(SystemConfig::getRootWebSiteFolder()
+                               +SystemConfig::readConfigFile().value("Post-Dir").toString()+'_'+path+'_'+QString::number(rand()));
+
+            qDebug() << put_file.fileName();
+                if(put_file.open(QIODevice::WriteOnly)){
+                    put_file.write(m_desirialized._body);
+                    put_file.close();
+                    m_byteData = QByteArray(QJsonDocument(QJsonObject({
+                                                            {"ResultCode", QJsonValue(0)},
+                                                            {"ResultDesc", QJsonValue("Accepted")}
+                                                        })).toJson());
+                }
+                else qDebug() << "File can't opened";
+
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", m_byteData);//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("text/plain"))
+        {
+            qDebug() << "text request";
+            qDebug() << m_desirialized._body;
+            NaiSysHttpResponse postResp("HTTP/1.1 400 Bad\r\n", "{Error: Unknown Request}");//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/plain");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            qDebug() << postResp.toByteArray();
+            return postResp;
+        }
+    }
+    return NaiSysHttpResponse("HTTP/1.1 400 Bad\r\n", "");
+}
+
+const DesirializedData &MethodHandler::desirialized() const
+{return m_desirialized;}
+
+void MethodHandler::setDesirialized(const DesirializedData &newDesirializedData)
+{m_desirialized = newDesirializedData;}
+
+const NaiSysHttpResponse &MethodHandler::defaultResponse() const
+{return m_defaultResponse;}
+
+const QStringList MethodHandler::messageParser(const QString &rawMsg)
+{
+    return rawMsg.split("::/");
+}
+
+const QString *MethodHandler::querryParser(const QString &rawMsg)
+{
+    auto const varr = messageParser(rawMsg); //return the separated string as an array
+    auto const x = new QString(callsArr[varr[0]]);
+
+    if(varr.size() == 2) return &x->replace("_?1",varr[1]);
+
+    else if(varr.size() > 2){
+        const int eval = x->count("_?");
+        for (int i = 1; i <= eval; ++i)
+            x->replace("_?"+QString::number(i), varr[i]);
+        return x;
+    }
+    else return x;
 }
 
 } // namespace NaiSys

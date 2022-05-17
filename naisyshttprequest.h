@@ -1,5 +1,5 @@
-#ifndef NAISYS_NAISYSHTTPREQUEST_H
-#define NAISYS_NAISYSHTTPREQUEST_H
+#ifndef NAISYS_NaiSysHttpRequest_H
+#define NAISYS_NaiSysHttpRequest_H
 
 #include <QObject>
 #include <QDebug>
@@ -14,18 +14,22 @@ namespace NaiSys {
 class NaiSysHttpRequest
 {
 public:
-    NaiSysHttpRequest(const QByteArray &data);
-    const DesirializedData *getDesirialized() const;
+    NaiSysHttpRequest();
+    explicit NaiSysHttpRequest(const QByteArray &data);
+    NaiSysHttpRequest(const QByteArray &header, const QByteArray &body);
 
-    const QByteArray &rawHeader() const;
-    const QByteArray &rawBody() const;
-    const QJsonObject &headerJson() const;
+    void appendDefinedHeader(const int eHeader, const QByteArray &value);
+    void appendRawHeader(const QByteArray &key, const QByteArray &value);
+
+    const QByteArray &header() const;
+    void setHeader(const QByteArray &newHeader);
+    const QByteArray &body() const;
+    void setBody(const QByteArray &newBody);
 
 private:
-    QByteArray m_rawHeader, m_rawBody;
-    QJsonObject m_headerJson;
+    QByteArray m_header, m_body;
 };
 
 } // namespace NaiSys
 
-#endif // NAISYS_NAISYSHTTPREQUEST_H
+#endif // NAISYS_NaiSysHttpRequest_H

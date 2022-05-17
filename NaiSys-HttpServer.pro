@@ -13,10 +13,11 @@ SOURCES += \
         databasehandler.cpp \
         main.cpp \
         naisyshttpparser.cpp \
-        naisyshttprequest.cpp \
+        NaiSysHttpRequest.cpp \
         naisyshttpresponse.cpp \
         naisyshttpserver.cpp \
         naisyshttpsserver.cpp \
+        naisysjsonobject.cpp \
         naisysmethodhandler.cpp \
         sslconnectionthread.cpp \
         systemconfig.cpp
@@ -31,10 +32,12 @@ HEADERS += \
     databasehandler.h \
     naisysdefs.h \
     naisyshttpparser.h \
-    naisyshttprequest.h \
+    NaiSysHttpRequest.h \
     naisyshttpresponse.h \
     naisyshttpserver.h \
     naisyshttpsserver.h \
+    naisysjsonobject.h \
     naisysmethodhandler.h \
+    servercalls.h \
     sslconnectionthread.h \
     systemconfig.h

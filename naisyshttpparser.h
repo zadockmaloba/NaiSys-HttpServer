@@ -7,26 +7,29 @@
 
 #include "naisysdefs.h"
 #include "naisysmethodhandler.h"
+#include "naisyshttpresponse.h"
+#include "naisyshttprequest.h"
 
 namespace NaiSys {
 
-class NaiSysHttpParser : public QObject
+class HttpParser
 {
-    Q_OBJECT
 public:
-    explicit NaiSysHttpParser(QObject *parent = nullptr);
-    NaiSysHttpParser(QTcpSocket *socket, QObject *parent = nullptr);
-    QByteArray renderHttp() const;
+    HttpParser();
+    explicit HttpParser(const NaiSysHttpRequest &request);
+    explicit HttpParser(const NaiSysHttpResponse &response);
+    const NaiSysHttpResponse renderHttp();
 
-    DesirializedData desirialized() const;
+
+    const DesirializedData &desirialized() const;
     void setDesirialized(const DesirializedData &newDesirialized);
 
-signals:
+public://static methods
+    static const DesirializedData getDesirializedData(QByteArray &data);
+    static const QJsonObject getJsonHeader(const QByteArray &header);
 
 private:
-    QTcpSocket* m_socket;
     DesirializedData m_desirialized;
-
 };
 
 } // namespace NaiSys

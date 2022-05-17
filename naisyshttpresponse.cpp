@@ -4,29 +4,63 @@ namespace NaiSys {
 
 NaiSysHttpResponse::NaiSysHttpResponse()
 {
-    m_httpHeader.append(__init_header__);
+
 }
 
-const QByteArray &NaiSysHttpResponse::toByteArray() const
+NaiSysHttpResponse::NaiSysHttpResponse(const QByteArray &data)
 {
-    return *new QByteArray(m_httpHeader+"\r\n"+m_httpBody);
+    auto const a = QString::fromUtf8(data).split("\r\n\r\n");
+    if( a.size() > 1 ){
+        m_header = a[0].toUtf8();
+        m_body = a[1].toUtf8();
+    }
 }
 
-void NaiSysHttpResponse::setRawHeader(const QByteArray &key, const QByteArray &value)
+NaiSysHttpResponse::NaiSysHttpResponse(const QByteArray &header, const QByteArray &body)
+    : m_header{header},
+      m_body{body}
 {
-    m_httpHeader.append(key+": "+value+"\r\n");
+
 }
 
-const QByteArray &NaiSysHttpResponse::httpHeader() const
-{return m_httpHeader;}
+void NaiSysHttpResponse::appendDefinedHeader(const int eHeader, const QByteArray &value)
+{
+    switch (eHeader) {
+    case DefinedHeaders::ContentType :
+        appendRawHeader("Content-Type", value);
+        break;
+    case DefinedHeaders::ContentLength:
+        appendRawHeader("Content-Length", value);
+        break;
+    case DefinedHeaders::Authorization:
+        appendRawHeader("Authorization", value.toBase64());
+        break;
+    case DefinedHeaders::Cookies:
+        appendRawHeader("Cookie", value);
+        break;
+    }
+}
 
-void NaiSysHttpResponse::setHttpHeader(const QByteArray &newHttpHeader)
-{m_httpHeader = newHttpHeader;}
+void NaiSysHttpResponse::appendRawHeader(const QByteArray &key, const QByteArray &value)
+{
+    m_header.append(key+": "+value+"\r\n");
+}
 
-const QByteArray &NaiSysHttpResponse::httpBody() const
-{return m_httpBody;}
+const QByteArray NaiSysHttpResponse::toByteArray()
+{
+    return m_header+"\r\n"+m_body;
+}
 
-void NaiSysHttpResponse::setHttpBody(const QByteArray &newHttpBody)
-{m_httpBody = newHttpBody;}
+const QByteArray &NaiSysHttpResponse::header() const
+{return m_header;}
+
+void NaiSysHttpResponse::setHeader(const QByteArray &newHeader)
+{m_header = newHeader;}
+
+const QByteArray &NaiSysHttpResponse::body() const
+{return m_body;}
+
+void NaiSysHttpResponse::setBody(const QByteArray &newBody)
+{m_body = newBody;}
 
 }

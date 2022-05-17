@@ -9,9 +9,16 @@
 
 namespace NaiSys {
 
+enum DefinedHeaders{
+    ContentType,
+    ContentLength,
+    Authorization,
+    Cookies
+};
+
 struct DesirializedData{
     QJsonObject _header;
-    QByteArray _body;
+    QByteArray _body , _raw_header;
 };
 
 struct ServerAddress{

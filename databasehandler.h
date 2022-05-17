@@ -20,6 +20,7 @@ class DatabaseHandler : public QObject
 public:
     explicit DatabaseHandler(QObject *parent = nullptr);
     DatabaseHandler(const QSqlDatabase &dbH, QObject *parent = nullptr);
+    DatabaseHandler(const QString &connectionName, const QString &databaseName, QObject *parent = nullptr);
     void initialiseDb();
     void reConnectDb();
     bool createAndOrInsertRowToTable(const QString &tableName, const QJsonObject &data);
@@ -30,13 +31,13 @@ public:
     void setDbName(const QString &newDbName);
     const QString &dbConnectionName() const;
     void setDbConnectionName(const QString &newDbConnectionName);
+    QSqlQueryModel *runSqlQuerry(const QString &querry);
 
 signals:
 
 private://methods
     bool openDatabaseSocket();
     bool closeDatabaseSocket();
-    QByteArray runSqlQuerry(const QString &querry);
 
 private://members
     QSqlDatabase m_dbHandle;

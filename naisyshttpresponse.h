@@ -2,24 +2,31 @@
 #define NaiSysHttpResponse_H
 
 #include <QObject>
+#include "naisysdefs.h"
 
 namespace NaiSys {
+
 class NaiSysHttpResponse
 {
 public:
     NaiSysHttpResponse();
-    const QByteArray &toByteArray() const;
-    void setRawHeader(const QByteArray& key, const QByteArray& value);
+    explicit NaiSysHttpResponse(const QByteArray &data);
+    NaiSysHttpResponse(const QByteArray &header, const QByteArray &body);
 
-    const QByteArray &httpHeader() const;
-    void setHttpHeader(const QByteArray &newHttpHeader);
-    const QByteArray &httpBody() const;
-    void setHttpBody(const QByteArray &newHttpBody);
+    void appendDefinedHeader(const int eHeader, const QByteArray &value);
+    void appendRawHeader(const QByteArray &key, const QByteArray &value);
+
+    const QByteArray toByteArray();
+
+    const QByteArray &header() const;
+    void setHeader(const QByteArray &newHeader);
+    const QByteArray &body() const;
+    void setBody(const QByteArray &newBody);
 
 private:
-    const QByteArray __init_header__ = "HTTP/1.1 200 Ok\r\n";
-    QByteArray m_httpHeader, m_httpBody;
+    QByteArray m_header, m_body;
 };
+
 }
 
 #endif // NaiSysHttpResponse_H

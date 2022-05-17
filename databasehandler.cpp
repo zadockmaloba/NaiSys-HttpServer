@@ -15,6 +15,15 @@ DatabaseHandler::DatabaseHandler(const QSqlDatabase &dbH, QObject *parent)
 
 }
 
+DatabaseHandler::DatabaseHandler(const QString &connectionName, const QString &databaseName, QObject *parent)
+    : QObject{parent},
+      m_dbName{databaseName},
+      m_dbConnectionName{connectionName}
+{
+    this->m_dbHandle = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
+    this->m_dbHandle.setDatabaseName(m_dbName);
+}
+
 void DatabaseHandler::initialiseDb()
 {
     this->m_dbHandle = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
@@ -81,16 +90,17 @@ bool DatabaseHandler::closeDatabaseSocket()
     return true; //:^}
 }
 
-QByteArray DatabaseHandler::runSqlQuerry(const QString &querry)
+QSqlQueryModel *DatabaseHandler::runSqlQuerry(const QString &querry)
 {
     this->openDatabaseSocket();
+    auto m_model = new QSqlQueryModel; //TODO: Fix leak
     QSqlQuery m_query(m_dbHandle);
-    //auto const m_model = new QSqlQueryModel(this);
-    //m_model->setQuery(std::move(m_query));
-    (m_query.exec(querry)) ? qDebug() << "[ "+querry+" ]: Run successful":
-                             qDebug() << "[ "+querry+" ]: "<< m_query.lastError();
+    m_model->setQuery(m_query);
+    (m_query.exec(querry)) ? qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: Run successful":
+                             qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: "<< m_query.lastError();
+    m_dbHandle.commit();
     this->closeDatabaseSocket();
-    return "QByteArray()";
+    return m_model;
 }
 
 } // namespace NaiSys

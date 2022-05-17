@@ -7,29 +7,41 @@
 #include <QFile>
 #include <QString>
 #include "systemconfig.h"
+#include "naisysdefs.h"
 
 #include "databasehandler.h"
+#include "naisyshttpresponse.h"
+#include "naisyshttprequest.h"
+#include "servercalls.h"
+
+#include "naisysjsonobject.h"
 
 namespace NaiSys {
 
-class NaiSysMethodHandler : public QObject
+class MethodHandler
 {
-    Q_OBJECT
 public:
-    explicit NaiSysMethodHandler(QObject *parent = nullptr);
-    const QByteArray& get(const QString &path);
-    const QByteArray& post(const QString &path, const QByteArray& data);
-    const QByteArray& put() const;
+    MethodHandler();
+    explicit MethodHandler(const DesirializedData &data);
+    const NaiSysHttpResponse get();
+    const NaiSysHttpResponse post();
 
-signals:
+    const DesirializedData &desirialized() const;
+    void setDesirialized(const DesirializedData &newDesirialized);
+
+    const NaiSysHttpResponse &defaultResponse() const;
+
+private://methods
+    const QStringList messageParser(const QString &rawMsg);
+    const QString *querryParser(const QString &rawMsg);
 
 private:
-    QString m_rootPath;
-    QByteArray m_byteData;
+    DesirializedData m_desirialized;
+    const NaiSysHttpResponse m_defaultResponse {"HTTP/1.1 200 Ok\r\n", ""};
     QMap <QString, QString> m_routingTable = {
         {"/", SystemConfig::readConfigFile().value("Landing-Page").toString()},
         {"index", SystemConfig::readConfigFile().value("Landing-Page").toString()},
-	{"/favicon.ico", SystemConfig::readConfigFile().value("Landing-Page").toString()}
+        {"/favicon.ico", SystemConfig::readConfigFile().value("Landing-Page").toString()}
     };
 };
 

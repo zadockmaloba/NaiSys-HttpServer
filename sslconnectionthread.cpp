@@ -29,7 +29,7 @@ void sslConnectionThread::run()
     QObject::connect(&m_sslSocket, &QIODevice::readyRead, this, &sslConnectionThread::onReadyRead);
     QObject::connect(&m_sslSocket, &QSslSocket::disconnected, this, &sslConnectionThread::onDisconnected);
     QObject::connect(&m_sslSocket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
-    //QObject::connect(m_sslSocket, &QSslSocket::proxyAuthenticationRequired, this, &sslConnectionThread::onProxyAuthenticationRequired);
+
     exec();
 }
 
@@ -89,16 +89,9 @@ void sslConnectionThread::onReadyRead()
     auto const _b = m_sslSocket->readAll();
     m_sslSocket->flush();
 
-    NaiSysHttpRequest _req(_b);
-    NaiSysHttpParser _parse;
-    _parse.setDesirialized(*_req.getDesirialized());
-    auto const _a = _parse.renderHttp();
-
-    NaiSysHttpResponse _resp;
-    _resp.setHttpBody(_a);
-    _resp.setRawHeader("Connection", "keep-alive");
-    _resp.setRawHeader("Content-Length", QByteArray::number(_a.size()));
-    m_sslSocket->write(_resp.toByteArray());
+    auto const reqst = NaiSysHttpRequest(_b);
+    auto resp = HttpParser(reqst).renderHttp();
+    m_sslSocket->write(resp.toByteArray());
 }
 
 void sslConnectionThread::onConnected()
