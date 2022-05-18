@@ -108,8 +108,6 @@ void sslConnectionThread::onReadyRead()
         this->m_expectingBody = true;
         qDebug() << "{{AWAITING SOME DATA}}: " << _size;
         m_bufferRequest = reqst;
-        m_sslSocket->flush();
-        return;
     }
     auto resp = parser.renderHttp();
     m_sslSocket->flush();
