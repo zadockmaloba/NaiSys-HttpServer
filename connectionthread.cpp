@@ -3,7 +3,8 @@
 namespace NaiSys {
 ConnectionThread::ConnectionThread(const qintptr descriptor,QObject *parent)
     : QThread{parent},
-      m_descriptor{descriptor}
+      m_descriptor{descriptor},
+      m_expectingBody{0}
 {
 
 }
@@ -66,15 +67,16 @@ void ConnectionThread::onReadChannelFinished()
 void ConnectionThread::onReadyRead()
 {
     auto const m_tcpSocket = qobject_cast<QTcpSocket*> (sender());
-    QByteArray _b;
-
-    while (m_tcpSocket->bytesAvailable()) {
-        _b.append(m_tcpSocket->readLine());
-    }
+    auto const _b = m_tcpSocket->readAll();
 
     qDebug() << "{{INPUT}} $$__ "<< _b;
 
-    auto const reqst = NaiSysHttpRequest(_b);
+    auto reqst = NaiSysHttpRequest(_b);
+
+    if(m_expectingBody){
+        reqst = m_bufferRequest;
+        reqst.setBody(_b);
+    }
 
     auto parser = HttpParser(reqst);
 
@@ -83,9 +85,11 @@ void ConnectionThread::onReadyRead()
     qDebug() << "////___ BYTES MISSING: "<< _size;
 
     if(_size){
-        m_tcpSocket->waitForBytesWritten();
-        auto const _data = m_tcpSocket->read(_size);
-        qDebug() << "{{COLLECTED MISSING DATA}}: " << _data;
+        this->m_expectingBody = true;
+        qDebug() << "{{AWAITING SOME DATA}}: " << _size;
+        m_bufferRequest = reqst;
+        m_tcpSocket->flush();
+        return;
     }
 
     m_tcpSocket->flush();

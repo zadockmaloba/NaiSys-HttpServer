@@ -58,6 +58,8 @@ private:
     qintptr m_descriptor;
     int m_listenPort;
     QString m_listenAddress;
+    bool m_expectingBody;
+    NaiSysHttpRequest m_bufferRequest;
 };
 }
 

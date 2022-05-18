@@ -4,7 +4,8 @@ namespace NaiSys {
 
 sslConnectionThread::sslConnectionThread(const qintptr descriptor, QObject *parent)
     : QThread{parent},
-      m_descriptor{descriptor}
+      m_descriptor{descriptor},
+      m_expectingBody{0}
 {
 
 }
@@ -86,15 +87,17 @@ void sslConnectionThread::onReadChannelFinished()
 void sslConnectionThread::onReadyRead()
 {
     auto const m_sslSocket = qobject_cast<QSslSocket*> (sender());
-    QByteArray _b;
-
-    while (m_sslSocket->bytesAvailable()) {
-        _b.append(m_sslSocket->readLine());
-    }
+    auto const _b = m_sslSocket->readAll();
 
     qDebug() << "{{INPUT}} $$__ "<< _b;
 
-    auto const reqst = NaiSysHttpRequest(_b);
+    auto reqst = NaiSysHttpRequest(_b);
+
+    if(m_expectingBody){
+        reqst = m_bufferRequest;
+        reqst.setBody(_b);
+    }
+
     auto parser = HttpParser(reqst);
 
     auto const _size = (qsizetype)parser.desirialized()._header.value("Content-Length").toString().toInt()
@@ -102,11 +105,12 @@ void sslConnectionThread::onReadyRead()
     qDebug() << "////___ BYTES MISSING: "<< _size;
 
     if(_size){
-        m_sslSocket->waitForBytesWritten();
-        auto const _data = m_sslSocket->read(_size);
-        qDebug() << "{{COLLECTED MISSING DATA}}: " << _data;
+        this->m_expectingBody = true;
+        qDebug() << "{{AWAITING SOME DATA}}: " << _size;
+        m_bufferRequest = reqst;
+        m_sslSocket->flush();
+        return;
     }
-
     auto resp = parser.renderHttp();
     m_sslSocket->flush();
     m_sslSocket->write(resp.toByteArray());
