@@ -99,12 +99,12 @@ void sslConnectionThread::onReadyRead()
     if(parser.desirialized()._header.value("Content-Length").toInt()
             > parser.desirialized()._body.size()){
         m_sslSocket->waitForBytesWritten();
+        auto const _size = parser.desirialized()._header.value("Content-Length").toInt()
+                - parser.desirialized()._body.size();
         qDebug() << "BYTES MISSING: "
-                 << parser.desirialized()._header.value("Content-Length").toInt()
-                    - parser.desirialized()._body.size();
-        while (m_sslSocket->bytesAvailable()) {
-            parser.desirialized()._body.append( m_sslSocket->readLine());
-        }
+                 << _size;
+        auto const _data = m_sslSocket->read(_size);
+        qDebug() << _data;
     }
 
     auto resp = parser.renderHttp();
