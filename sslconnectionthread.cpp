@@ -97,15 +97,14 @@ void sslConnectionThread::onReadyRead()
     auto const reqst = NaiSysHttpRequest(_b);
     auto parser = HttpParser(reqst);
 
-    if(parser.desirialized()._header.value("Content-Length").toInt()
-            > parser.desirialized()._body.size()){
+    auto const _size = (qsizetype)parser.desirialized()._header.value("Content-Length").toString().toInt()
+            - parser.desirialized()._body.size();
+    qDebug() << "////___ BYTES MISSING: "<< _size;
+
+    if(_size){
         m_sslSocket->waitForBytesWritten();
-        auto const _size = parser.desirialized()._header.value("Content-Length").toInt()
-                - parser.desirialized()._body.size();
-        qDebug() << "BYTES MISSING: "
-                 << _size;
         auto const _data = m_sslSocket->read(_size);
-        qDebug() << _data;
+        qDebug() << "{{COLLECTED MISSING DATA}}: " << _data;
     }
 
     auto resp = parser.renderHttp();
