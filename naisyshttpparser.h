@@ -19,6 +19,7 @@ public:
     explicit HttpParser(const NaiSysHttpRequest &request);
     explicit HttpParser(const NaiSysHttpResponse &response);
     const NaiSysHttpResponse renderHttp();
+    const NaiSysHttpResponse getDefaultResponse();
 
 
     DesirializedData &desirialized();

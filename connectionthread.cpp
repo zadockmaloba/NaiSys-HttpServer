@@ -88,6 +88,10 @@ void ConnectionThread::onReadyRead()
         this->m_expectingBody = true;
         qDebug() << "{{AWAITING SOME DATA}}: " << _size;
         m_bufferRequest = reqst;
+        m_tcpSocket->flush();
+        auto resp = parser.getDefaultResponse();
+        m_tcpSocket->write(resp.toByteArray());
+        return;
     }
 
     m_tcpSocket->flush();

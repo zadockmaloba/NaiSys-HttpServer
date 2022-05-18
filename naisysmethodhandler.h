@@ -38,7 +38,7 @@ private://methods
 
 private:
     DesirializedData m_desirialized;
-    const NaiSysHttpResponse m_defaultResponse {"HTTP/1.1 200 Ok\r\n", ""};
+    const NaiSysHttpResponse m_defaultResponse {"HTTP/1.1 200 Ok\r\n", "{}"};
     QMap <QString, QString> m_routingTable = {
         {"/", SystemConfig::readConfigFile().value("Landing-Page").toString()},
         {"index", SystemConfig::readConfigFile().value("Landing-Page").toString()},
