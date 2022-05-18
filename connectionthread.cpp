@@ -71,8 +71,8 @@ void ConnectionThread::onReadyRead()
     while (m_tcpSocket->bytesAvailable()) {
         _b.append(m_tcpSocket->readLine());
     }
-    qDebug() << _b;
-    m_tcpSocket->flush();
+
+    qDebug() << "{{INPUT}} $$__ "<< _b;
 
     auto const reqst = NaiSysHttpRequest(_b);
 
@@ -89,6 +89,7 @@ void ConnectionThread::onReadyRead()
         qDebug() << _data;
     }
 
+    m_tcpSocket->flush();
     auto resp = parser.renderHttp();
     m_tcpSocket->write(resp.toByteArray());
 }

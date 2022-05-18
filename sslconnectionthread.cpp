@@ -91,7 +91,8 @@ void sslConnectionThread::onReadyRead()
     while (m_sslSocket->bytesAvailable()) {
         _b.append(m_sslSocket->readLine());
     }
-    m_sslSocket->flush();
+
+    qDebug() << "{{INPUT}} $$__ "<< _b;
 
     auto const reqst = NaiSysHttpRequest(_b);
     auto parser = HttpParser(reqst);
@@ -108,6 +109,7 @@ void sslConnectionThread::onReadyRead()
     }
 
     auto resp = parser.renderHttp();
+    m_sslSocket->flush();
     m_sslSocket->write(resp.toByteArray());
 }
 
