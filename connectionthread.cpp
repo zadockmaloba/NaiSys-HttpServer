@@ -78,11 +78,11 @@ void ConnectionThread::onReadyRead()
 
     auto parser = HttpParser(reqst);
 
-    if(parser.desirialized()._header.value("Content-Lenqth").toInt()
+    if(parser.desirialized()._header.value("Content-Length").toInt()
             > parser.desirialized()._body.size()){
         m_tcpSocket->waitForBytesWritten();
         qDebug() << "BYTES MISSING: "
-                 << parser.desirialized()._header.value("Content-Lenqth").toInt()
+                 << parser.desirialized()._header.value("Content-Length").toInt()
                     - parser.desirialized()._body.size();
         while (m_tcpSocket->bytesAvailable()) {
             parser.desirialized()._body.append( m_tcpSocket->readLine());
