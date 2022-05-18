@@ -94,7 +94,20 @@ void sslConnectionThread::onReadyRead()
     m_sslSocket->flush();
 
     auto const reqst = NaiSysHttpRequest(_b);
-    auto resp = HttpParser(reqst).renderHttp();
+    auto parser = HttpParser(reqst);
+
+    if(parser.desirialized()._header.value("Content-Lenqth").toInt()
+            > parser.desirialized()._body.size()){
+        m_sslSocket->waitForBytesWritten();
+        qDebug() << "BYTES MISSING: "
+                 << parser.desirialized()._header.value("Content-Lenqth").toInt()
+                    - parser.desirialized()._body.size();
+        while (m_sslSocket->bytesAvailable()) {
+            parser.desirialized()._body.append( m_sslSocket->readLine());
+        }
+    }
+
+    auto resp = parser.renderHttp();
     m_sslSocket->write(resp.toByteArray());
 }
 

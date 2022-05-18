@@ -75,7 +75,21 @@ void ConnectionThread::onReadyRead()
     m_tcpSocket->flush();
 
     auto const reqst = NaiSysHttpRequest(_b);
-    auto resp = HttpParser(reqst).renderHttp();
+
+    auto parser = HttpParser(reqst);
+
+    if(parser.desirialized()._header.value("Content-Lenqth").toInt()
+            > parser.desirialized()._body.size()){
+        m_tcpSocket->waitForBytesWritten();
+        qDebug() << "BYTES MISSING: "
+                 << parser.desirialized()._header.value("Content-Lenqth").toInt()
+                    - parser.desirialized()._body.size();
+        while (m_tcpSocket->bytesAvailable()) {
+            parser.desirialized()._body.append( m_tcpSocket->readLine());
+        }
+    }
+
+    auto resp = parser.renderHttp();
     m_tcpSocket->write(resp.toByteArray());
 }
 

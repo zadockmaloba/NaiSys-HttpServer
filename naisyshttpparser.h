@@ -21,7 +21,7 @@ public:
     const NaiSysHttpResponse renderHttp();
 
 
-    const DesirializedData &desirialized() const;
+    DesirializedData &desirialized();
     void setDesirialized(const DesirializedData &newDesirialized);
 
 public://static methods

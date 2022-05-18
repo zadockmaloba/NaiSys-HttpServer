@@ -37,7 +37,7 @@ const NaiSysHttpResponse HttpParser::renderHttp()
     return NaiSys::MethodHandler().defaultResponse();
 }
 
-const DesirializedData &HttpParser::desirialized() const
+DesirializedData &HttpParser::desirialized()
 {return m_desirialized;}
 
 void HttpParser::setDesirialized(const DesirializedData &newDesirialized)
