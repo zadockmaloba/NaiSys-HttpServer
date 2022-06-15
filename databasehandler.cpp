@@ -55,25 +55,39 @@ void DatabaseHandler::reConnectDb()
 
 bool DatabaseHandler::createAndOrInsertRowToTable(const QString &tableName, const QJsonObject &data)
 {
-    auto const colStringList = data.toVariantMap().keys();
+    auto const colStringList = data.keys();
     auto const valStringList = data.toVariantMap().values();
+    m_dbHandle.open();
+    auto const availableTables = m_dbHandle.tables();
+    m_dbHandle.close();
 
     QString colString, valString;
 
-    for(auto const &v : colStringList) colString.append(v+",");
+    for(auto const &v : colStringList) colString.append(v.toLower()+",");
     colString.chop(1);
 
-    for(auto const &v : valStringList) valString.append("'"+v.toString()+"',");
+    for(auto const &v : valStringList) valString.append("'"+v.toString()
+                                                        .replace("'", "''")
+                                                        +"',");
     valString.chop(1);
+
+    if(colString.contains(",TransID", Qt::CaseSensitivity::CaseInsensitive)
+            || colString.contains(",ID ", Qt::CaseSensitivity::CaseInsensitive))
+        colString.replace(",transid", ",transid UNIQUE PRIMARY KEY NOT NULL"); //TODO: Use REGEX
 
     auto const crt = QString("CREATE TABLE IF NOT EXISTS "+tableName+" ( "+colString+" );");
 
+    if(colString.contains("UNIQUE PRIMARY KEY NOT NULL", Qt::CaseSensitivity::CaseInsensitive))
+        colString.replace("UNIQUE PRIMARY KEY NOT NULL", " ");
     auto const a = QString("INSERT INTO "+tableName+" ( "+colString+" ) VALUES ( "+valString+" );");
 
-    qDebug() << a;
+    if(!availableTables.contains(tableName)){
+        auto ptr_a = this->runSqlQuerry(crt);
+        ptr_a->deleteLater();
+    }
 
-    this->runSqlQuerry(crt);
-    this->runSqlQuerry(a);
+    auto ptr_b = this->runSqlQuerry(a);
+    ptr_b->deleteLater();
 
     return 1;
 }
