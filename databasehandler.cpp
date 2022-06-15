@@ -104,10 +104,10 @@ bool DatabaseHandler::closeDatabaseSocket()
     return true; //:^}
 }
 
-QSqlQueryModel *DatabaseHandler::runSqlQuerry(const QString &querry)
+inline QSqlQueryModel *DatabaseHandler::runSqlQuerry(const QString &querry)
 {
     this->openDatabaseSocket();
-    auto m_model = new QSqlQueryModel; //TODO: Fix leak
+    auto m_model = new QSqlQueryModel;
     m_model->setQuery(querry, m_dbHandle);
     qDebug() << "{"+m_dbName+"} "<< "[ "+querry+" ]: "<< m_model->lastError().text();
     this->closeDatabaseSocket();
