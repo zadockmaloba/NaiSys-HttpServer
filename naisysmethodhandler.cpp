@@ -137,10 +137,13 @@ const NaiSysHttpResponse MethodHandler::post()
 
             QFile put_file(SystemConfig::getRootWebSiteFolder()
                                +SystemConfig::readConfigFile()
-                           .value("Post-Dir").toString()+'_'+path+'_'+QDateTime::currentDateTime().toString().replace(" ","_"));
+                           .value("Post-Dir").toString()+'/'+path+'_'+QDate::currentDate()
+                           .toString()
+                           .toLower()
+                           .replace(" ","_"));
 
             qDebug() << put_file.fileName();
-                if(put_file.open(QIODevice::WriteOnly)){
+                if(put_file.open(QIODevice::WriteOnly | QIODevice::Append)){
                     put_file.write(m_desirialized._body);
                     put_file.close();
                     m_byteData = QByteArray(QJsonDocument(QJsonObject({
