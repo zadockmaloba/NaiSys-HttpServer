@@ -83,11 +83,11 @@ void SystemConfig::createRootWebsiteFolder([[maybe_unused]]const QString &folder
     }
 
     QDir(__doc_dir__).mkdir(__doc_dir__+'/'+ m_sRootConfigFolder+'/'
-                            + m_sRootWebSiteFolder
+                            + m_sRootWebSiteFolder+'/'
                             + m_sInitData.value("Post-Dir").toString());
 
     QDir(__doc_dir__).mkdir(__doc_dir__+ m_sRootConfigFolder+'/'
-                            + m_sRootWebSiteFolder
+                            + m_sRootWebSiteFolder+'/'
                             + m_sInitData.value("Put-Dir").toString());
 
     qDebug() << QString((_r == true ) ? "Succesfully Created" : "Failed to Create");
