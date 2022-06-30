@@ -27,8 +27,8 @@ struct ServerAddress{
 };
 
 struct SslObject{
-    QSslCertificate *_ssl_cert;
-    QSslKey *_ssl_key;
+    QString __cert_dir;
+    QString __key_dir;
 };
 }
 
