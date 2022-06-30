@@ -15,7 +15,7 @@ MethodHandler::MethodHandler(const DesirializedData &data)
 
 const NaiSysHttpResponse MethodHandler::get()
 {
-    if(m_desirialized._header.value("Content-Length").toString().toInt() > 0)
+    if(m_desirialized._header.contains("Content-Length"))
     {
         if(m_desirialized._header.value("Content-Type")
                 .toString().contains("naisys/sql"))
@@ -65,10 +65,31 @@ const NaiSysHttpResponse MethodHandler::get()
         else if(m_desirialized._header.value("Content-Type")
                 .toString().contains("text/plain"))
         {
-            qDebug() << "json request";
+            qDebug() << "plain text request";
             NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", "<h1> NaiSys | Server </h1>");//TODO: Find a better method
             postResp.appendRawHeader("Connection", "keep-alive");
             postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/plain");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+        else if(m_desirialized._header.value("Content-Type")
+                .toString().contains("text/html"))
+        {
+            qDebug() << "html request";
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", "<h1> NaiSys | Server </h1>");//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/plain");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
+            return postResp;
+        }
+    }
+    else if(!m_desirialized._header.contains("Content-Length"))
+    {
+        if(m_desirialized._header.value("Accept").toString().contains("text/html")){
+            qDebug() << "html request";
+            NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", "<h1> NaiSys | Server </h1>");//TODO: Find a better method
+            postResp.appendRawHeader("Connection", "keep-alive");
+            postResp.appendDefinedHeader(DefinedHeaders::ContentType, "text/html");
             postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
             return postResp;
         }
@@ -78,7 +99,7 @@ const NaiSysHttpResponse MethodHandler::get()
 
 const NaiSysHttpResponse MethodHandler::post()
 {
-    if(m_desirialized._header.value("Content-Length").toString().toInt() > 0)
+    if(m_desirialized._header.contains("Content-Length"))
     {
         if(m_desirialized._header.value("Content-Type")
                 .toString().contains("naisys/sql"))
@@ -92,7 +113,7 @@ const NaiSysHttpResponse MethodHandler::post()
             auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
 
             NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
-            postResp.appendRawHeader("Connection", "keep-alive");
+            //postResp.appendRawHeader("Connection", "keep-alive");
             postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
             postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
             return postResp;
@@ -110,7 +131,7 @@ const NaiSysHttpResponse MethodHandler::post()
             auto const jresp = NaiSysJsonObject::qryModelToJson(qrymdl);
 
             NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", jresp);//TODO: Find a better method
-            postResp.appendRawHeader("Connection", "keep-alive");
+            //postResp.appendRawHeader("Connection", "keep-alive");
             postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
             postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
             return postResp;
@@ -132,8 +153,6 @@ const NaiSysHttpResponse MethodHandler::post()
                     .createAndOrInsertRowToTable(path,jObj);
 
             qDebug() << "[JSON POST STATUS]: "<< resp;
-            qDebug() << "[JSON HEADER]: "<< m_desirialized._header;
-            qDebug() << "[DESIRIALIZED_BODY]: "<<m_desirialized._body;
 
             QFile put_file(SystemConfig::getRootWebSiteFolder()
                                +SystemConfig::readConfigFile()
@@ -154,7 +173,7 @@ const NaiSysHttpResponse MethodHandler::post()
                 else qDebug() << "File can't opened";
 
             NaiSysHttpResponse postResp("HTTP/1.1 200 Ok\r\n", m_byteData);//TODO: Find a better method
-            postResp.appendRawHeader("Connection", "keep-alive");
+            //postResp.appendRawHeader("Connection", "keep-alive");
             postResp.appendDefinedHeader(DefinedHeaders::ContentType, "application/json");
             postResp.appendDefinedHeader(DefinedHeaders::ContentLength, QString::number(postResp.body().size()).toUtf8());
             return postResp;
@@ -171,6 +190,10 @@ const NaiSysHttpResponse MethodHandler::post()
             qDebug() << postResp.toByteArray();
             return postResp;
         }
+    }
+    else if(!m_desirialized._header.contains("Content-Length"))
+    {
+        return NaiSysHttpResponse("HTTP/1.1 400 Bad\r\n", "");
     }
     return NaiSysHttpResponse("HTTP/1.1 400 Bad\r\n", "");
 }
