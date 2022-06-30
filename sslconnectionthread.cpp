@@ -30,7 +30,7 @@ void sslConnectionThread::run()
     QObject::connect(&m_sslSocket, &QSslSocket::connected, this, &sslConnectionThread::onConnected);
     QObject::connect(&m_sslSocket, &QIODevice::readyRead, this, &sslConnectionThread::onReadyRead);
     QObject::connect(&m_sslSocket, &QSslSocket::disconnected, this, &sslConnectionThread::onDisconnected);
-#if QT_VERSION >= 0x06000
+#if QT_VERSION > QT_VERSION_CHECK(5, 15, 0)
     QObject::connect(&m_sslSocket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
 #else
     QObject::connect(&m_sslSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
