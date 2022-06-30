@@ -1,4 +1,5 @@
 #include "connectionthread.h"
+#include "QtGlobal"
 
 namespace NaiSys {
 ConnectionThread::ConnectionThread(const qintptr descriptor,QObject *parent)
