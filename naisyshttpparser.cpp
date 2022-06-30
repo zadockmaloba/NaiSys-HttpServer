@@ -13,6 +13,8 @@ HttpParser::HttpParser(const NaiSysHttpRequest &request)
                              request.body(),
                              request.header()
                            };
+    this->m_keepAlive = m_desirialized._header.value("Connection")
+            .toString().contains("keep-alive", Qt::CaseInsensitive);
 }
 
 HttpParser::HttpParser(const NaiSysHttpResponse &response)
@@ -69,6 +71,11 @@ const QJsonObject HttpParser::getJsonHeader(const QByteArray &header)
         }
     }
     return jsObj;
+}
+
+bool HttpParser::keepAlive() const
+{
+    return m_keepAlive;
 }
 
 } // namespace NaiSys

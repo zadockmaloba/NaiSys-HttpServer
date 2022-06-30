@@ -28,9 +28,11 @@ public:
 public://static methods
     static const DesirializedData getDesirializedData(QByteArray &data);
     static const QJsonObject getJsonHeader(const QByteArray &header);
+    bool keepAlive() const;
 
 private:
     DesirializedData m_desirialized;
+    bool m_keepAlive;
 };
 
 } // namespace NaiSys
