@@ -35,7 +35,7 @@ void ConnectionThread::run()
     QObject::connect(&m_tcpSocket, &QIODevice::readyRead, this, &ConnectionThread::onReadyRead);
     QObject::connect(&m_tcpSocket, &QTcpSocket::disconnected, this, &ConnectionThread::onDisconnected);
     QObject::connect(&m_tcpSocket, SIGNAL(errorOccurred(QAbstractSocket::SocketError)), this, SLOT(onErrorOccurred(QAbstractSocket::SocketError)));
-    //QObject::connect(m_tcpSocket, &QTcpSocket::proxyAuthenticationRequired, this, &ConnectionThread::onProxyAuthenticationRequired);
+
     exec();
 }
 
@@ -76,6 +76,7 @@ void ConnectionThread::onReadyRead()
     if(m_expectingBody){
         reqst = m_bufferRequest;
         reqst.setBody(_b);
+        m_expectingBody = false;
     }
 
     auto parser = HttpParser(reqst);
@@ -97,6 +98,11 @@ void ConnectionThread::onReadyRead()
     m_tcpSocket->flush();
     auto resp = parser.renderHttp();
     m_tcpSocket->write(resp.toByteArray());
+
+    if(!parser.keepAlive())
+    {
+        qDebug() << "Attempting disconnect";
+    }
 }
 
 void ConnectionThread::onConnected()

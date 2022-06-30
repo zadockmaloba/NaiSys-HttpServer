@@ -14,8 +14,6 @@ void sslConnectionThread::run()
 {
     QSslSocket m_sslSocket;
 
-    m_sslSocket.setLocalCertificate(SystemConfig::readConfigFile().value("Ssl-Cert").toString());
-    m_sslSocket.setPrivateKey(SystemConfig::readConfigFile().value("Ssl-Key").toString());
 
     if(!m_sslSocket.setSocketDescriptor(m_descriptor)){
         qDebug() << (m_sslSocket.errorString());
@@ -89,13 +87,12 @@ void sslConnectionThread::onReadyRead()
     auto const m_sslSocket = qobject_cast<QSslSocket*> (sender());
     auto const _b = m_sslSocket->readAll();
 
-    qDebug() << "{{INPUT}} $$__ "<< _b;
-
     auto reqst = NaiSysHttpRequest(_b);
 
     if(m_expectingBody){
         reqst = m_bufferRequest;
         reqst.setBody(_b);
+        m_expectingBody = false;
     }
 
     auto parser = HttpParser(reqst);
@@ -116,6 +113,11 @@ void sslConnectionThread::onReadyRead()
     auto resp = parser.renderHttp();
     m_sslSocket->flush();
     m_sslSocket->write(resp.toByteArray());
+
+    if(!parser.keepAlive())
+    {
+        qDebug() << "Attempting disconnect";
+    }
 }
 
 void sslConnectionThread::onConnected()
