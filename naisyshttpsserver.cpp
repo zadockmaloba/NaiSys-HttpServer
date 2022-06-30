@@ -38,8 +38,20 @@ void NaiSysHttpsServer::incomingConnection(qintptr socketDescriptor)
     workerThread->setListenPort(m_listenPort);
     workerThread->setListenAddress(m_listenAddress);
 
-    QObject::connect(workerThread, SIGNAL(finished()), workerThread,SLOT(deleteLater()));
+    workerThread->setSslObject(this->m_sslObj);
+
+    QObject::connect(workerThread, SIGNAL(finished()), workerThread,SLOT(deleteLater()), Qt::DirectConnection);
     workerThread->start();
+}
+
+const NaiSys::SslObject &NaiSysHttpsServer::sslObj() const
+{
+    return m_sslObj;
+}
+
+void NaiSysHttpsServer::setSslObj(const NaiSys::SslObject &newSslObj)
+{
+    m_sslObj = newSslObj;
 }
 
 int NaiSysHttpsServer::listenPort() const

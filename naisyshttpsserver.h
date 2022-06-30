@@ -26,12 +26,16 @@ public:
     const QString &listenAddress() const;
     void setListenAddress(const QString &newListenAddress);
 
+    const NaiSys::SslObject &sslObj() const;
+    void setSslObj(const NaiSys::SslObject &newSslObj);
+
 protected:
     void incomingConnection(qintptr socketDescriptor);
 
 private:
     int m_listenPort;
     QString m_listenAddress;
+    NaiSys::SslObject m_sslObj;
 };
 
 } // namespace NaiSys
