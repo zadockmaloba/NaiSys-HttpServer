@@ -37,7 +37,25 @@ const QJsonObject SystemConfig::m_sInitData = {
     {"Post-Dir", QJsonValue("post")},
     {"Put-Dir", QJsonValue("put")},
     {"Ssl-Cert", QJsonValue("/root/cert.pem")},
-    {"Ssl-Key", QJsonValue("/root/key.pem")}
+    {"Ssl-Key", QJsonValue("/root/key.pem")},
+    {"Enabled-Sites", QJsonArray{
+         QJsonObject{
+             {"Name", "Default"},
+             {"Port", 1234},
+             {"Domain", "www.test.com"},
+             {"Ssl", false},
+             {"Ssl-Cert", QJsonValue("/root/cert.pem")},
+             {"Ssl-Key", QJsonValue("/root/key.pem")}
+         },
+         QJsonObject{
+             {"Name", "Default-ssl"},
+             {"Port", 8080},
+             {"Domain", "www.test.com"},
+             {"Ssl", true},
+             {"Ssl-Cert", QJsonValue("/root/cert.pem")},
+             {"Ssl-Key", QJsonValue("/root/key.pem")}
+         }
+     }}
 };
 
 bool SystemConfig::checkForFile(const QString &filename)
