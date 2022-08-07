@@ -49,6 +49,11 @@ void NaiSysHttpRequest::appendRawHeader(const QByteArray &key, const QByteArray 
     m_header.append(key+": "+value+"\r\n");
 }
 
+void NaiSysHttpRequest::appendToBody(const QByteArray &data)
+{
+    m_body.append(data);
+}
+
 const QByteArray &NaiSysHttpRequest::header() const
 {return m_header;}
 

@@ -26,6 +26,8 @@ public:
     const QByteArray &body() const;
     void setBody(const QByteArray &newBody);
 
+    void appendToBody(const QByteArray &data);
+
 private:
     QByteArray m_header, m_body;
 };

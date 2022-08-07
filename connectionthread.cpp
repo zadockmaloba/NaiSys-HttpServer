@@ -72,31 +72,63 @@ void ConnectionThread::onReadChannelFinished()
 void ConnectionThread::onReadyRead()
 {
     auto const m_tcpSocket = qobject_cast<QTcpSocket*> (sender());
-    auto const _b = m_tcpSocket->readAll();
+    QByteArray _headerBA;
 
-    qDebug() << "{{INPUT}} $$__ "<< _b;
+    //read header
+    bool EOH = false;
+    while (m_tcpSocket->canReadLine() && !EOH && !m_expectingBody) {
+        auto const rd = m_tcpSocket->readLine();
+        qDebug() << "{ln} : " << rd;
 
-    auto reqst = NaiSysHttpRequest(_b);
+        EOH = (rd == "\r\n");
+
+        EOH ? _headerBA : _headerBA.append(rd);
+        EOH ? qDebug() << "End of Read" :qDebug() << "Continue Read";
+    }
+    _headerBA.chop(2); //has no effect when expecting body
+
+    auto const bodyBytes = m_tcpSocket->bytesAvailable();
+
+    qDebug() << "{{SOCKET}} :: Available bytes: " << bodyBytes;
+
+    qDebug() << "{{HEADER_READ}} :: " << _headerBA;
+
+
+    auto bodyBytesRead = m_tcpSocket->read(bodyBytes);
+
+    qDebug() << "{{BODY_BYTES_READ}} :: " << bodyBytesRead.size();
+
+    auto const _b = bodyBytesRead;
+
+    qDebug() << "{{BODY_READ}} :: " << _b;
+
+    auto reqst = NaiSysHttpRequest();
+    reqst.setHeader(_headerBA);
+    reqst.setBody(_b);
 
     if(m_expectingBody){
         reqst = m_bufferRequest;
-        reqst.setBody(_b);
+        reqst.appendToBody(_b);
         m_expectingBody = false;
     }
 
+    qDebug() << "Instantiate parser";
     auto parser = HttpParser(reqst);
 
-    auto const _size = (qsizetype)parser.desirialized()._header.value("Content-Length").toString().toInt()
-            - parser.desirialized()._body.size();
+    auto const _size = (qsizetype)parser.desirialized()
+            ._header.value("Content-Length")
+            .toString().toInt()
+            - (qsizetype)parser.desirialized()._body.size();
+
+    qDebug() << "////___ BYTES COLLECTED: "<< (qsizetype)parser.desirialized()._body.size();
     qDebug() << "////___ BYTES MISSING: "<< _size;
 
-    if(_size){
+    if(_size > 0){
         this->m_expectingBody = true;
         qDebug() << "{{AWAITING SOME DATA}}: " << _size;
         m_bufferRequest = reqst;
         m_tcpSocket->flush();
-        auto resp = parser.getDefaultResponse();
-        m_tcpSocket->write(resp.toByteArray());
+
         return;
     }
 

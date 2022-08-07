@@ -13,7 +13,7 @@ SOURCES += \
         databasehandler.cpp \
         main.cpp \
         naisyshttpparser.cpp \
-        NaiSysHttpRequest.cpp \
+        naisyshttprequest.cpp \
         naisyshttpresponse.cpp \
         naisyshttpserver.cpp \
         naisyshttpsserver.cpp \
@@ -32,7 +32,7 @@ HEADERS += \
     databasehandler.h \
     naisysdefs.h \
     naisyshttpparser.h \
-    NaiSysHttpRequest.h \
+    naisyshttprequest.h \
     naisyshttpresponse.h \
     naisyshttpserver.h \
     naisyshttpsserver.h \
