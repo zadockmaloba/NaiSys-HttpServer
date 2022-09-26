@@ -1,0 +1,3 @@
+[submodule "NaiSys-HttpServer-Lib"]
+	path = NaiSys-HttpServer-Lib
+	url = https://github.com/zadockmaloba/NaiSys-HttpServer-Lib.git
