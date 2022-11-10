@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     for(auto const &obj : config.value("Enabled-Sites").toArray().toVariantList()){
         auto const v =obj.toJsonObject();
         qDebug() << v.value("Name");
-        auto const serv = new NaiSys::NaiSysHttpServer(&a);
+        auto const serv = new NaiSys::NaiSysHttpServer();
         serv->setServerParams({
                                   .Port = v.value("Port").toInt(1234),
                                   .Ssl = v.value("Ssl").toBool(),
