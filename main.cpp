@@ -26,28 +26,21 @@ int main(int argc, char *argv[])
 
     auto const config = NaiSys::SystemConfig::readConfigFile();
 
-    auto const serv = new NaiSys::NaiSysHttpServer(
-                {1234, "localhost"}
-                );
-    serv->startServer();
-
-//    for(auto obj : config.value("Enabled-Sites").toArray()){
-//        auto const v =obj.toObject();
-//        qDebug() << v.value("Name");
-//        if(v.value("Ssl").toBool()){
-//            auto const serv = new NaiSys::NaiSysHttpsServer(
-//                        {v.value("Port").toInt(), config.value("Address").toString()}
-//                        );
-//            serv->setSslObj({v.value("Ssl-Cert").toString(), v.value("Ssl-Key").toString()});
-//            serv->startServer();
-//        }
-//        else {
-//            auto const serv = new NaiSys::NaiSysHttpServer(
-//                        {v.value("Port").toInt(), config.value("Address").toString()}
-//                        );
-//            serv->startServer();
-//        }
-//    }
+    for(auto const &obj : config.value("Enabled-Sites").toArray().toVariantList()){
+        auto const v =obj.toJsonObject();
+        qDebug() << v.value("Name");
+        auto const serv = new NaiSys::NaiSysHttpServer();
+        serv->setServerParams({
+                                  .Port = v.value("Port").toInt(1234),
+                                  .Ssl = v.value("Ssl").toBool(),
+                                  .Address = v.value("Address").toString(),
+                                  .Ssl_Cert = v.value("Ssl-Cert").toString(),
+                                  .Ssl_Key = v.value("Ssl-Key").toString(),
+                                  .Entry_Script = v.value("Entry-Script").toString(),
+                                  .Site_Dir = v.value("Site-Dir").toString()
+                              });
+        serv->startServer();
+    }
 
     return a.exec();
 }
