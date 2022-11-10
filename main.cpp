@@ -1,6 +1,8 @@
 #include <QCoreApplication>
+#include <QJsonObject>
+#include <QJsonArray>
+
 #include "naisyshttpserver.h"
-#include "naisyshttpsserver.h"
 #include "systemconfig.h"
 
 int main(int argc, char *argv[])
