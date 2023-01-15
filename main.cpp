@@ -2,8 +2,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "naisyshttpserver.h"
-#include "systemconfig.h"
+#include <NaiSys-HttpServer-Lib/naisyshttpserver.h>
+#include <NaiSys-DesktopUtils/systemconfig.h>
 
 int main(int argc, char *argv[])
 {
