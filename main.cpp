@@ -3,12 +3,13 @@
 #include <QJsonArray>
 
 #include <NaiSys-HttpServer-Lib/naisyshttpserver.h>
-#include <NaiSys-DesktopUtils/systemconfig.h>
+#include <NaiSys-DesktopUtils/src/systemconfig.h>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     QString ver = "NaiSys-HttpServer_v0.1.0";
+    qDebug() << ver;
     NaiSys::SystemConfig::setRootFolderName(ver);
     if(!NaiSys::SystemConfig::checkForConfigFile()){
         NaiSys::SystemConfig::insertToConfigFile
