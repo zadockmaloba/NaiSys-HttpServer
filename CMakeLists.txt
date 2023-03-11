@@ -5,6 +5,7 @@ project(NaiSys-HttpServer-Bin VERSION 0.0.1 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -std=c++17 -stdlib=libc++")
 
 find_package(Qt6 6.2 COMPONENTS Core Network Sql REQUIRED)
 
@@ -26,6 +27,17 @@ set_target_properties( NaiSys-HttpServer-Bin PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE FALSE # If you want to enable std::cout in Windows :^)
 )
+
+#add_custom_command(
+#    TARGET NaiSys-HttpServer-Bin POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_directory
+#    ${CMAKE_CURRENT_BINARY_DIR}/NaiSys-DesktopUtils/LibPython/pythonlib ${CMAKE_CURRENT_BINARY_DIR}/pythonlib
+#)
+
+#file(
+#    COPY ${CMAKE_CURRENT_BINARY_DIR}/NaiSys-DesktopUtils/LibPython/python
+#    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+#)
 
 target_link_libraries( NaiSys-HttpServer-Bin
     PRIVATE Qt6::Core
