@@ -43,7 +43,7 @@ target_link_libraries( NaiSys-HttpServer-Bin
     PRIVATE Qt6::Core
     PRIVATE Qt6::Network
     PRIVATE Qt6::Sql
-    naisyscore
+    
     naisyshttp
     naisysserverlang
     naisysjson
