@@ -28,17 +28,6 @@ set_target_properties( NaiSys-HttpServer-Bin PROPERTIES
     WIN32_EXECUTABLE FALSE # If you want to enable std::cout in Windows :^)
 )
 
-#add_custom_command(
-#    TARGET NaiSys-HttpServer-Bin POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy_directory
-#    ${CMAKE_CURRENT_BINARY_DIR}/NaiSys-DesktopUtils/LibPython/pythonlib ${CMAKE_CURRENT_BINARY_DIR}/pythonlib
-#)
-
-#file(
-#    COPY ${CMAKE_CURRENT_BINARY_DIR}/NaiSys-DesktopUtils/LibPython/python
-#    DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
-#)
-
 target_link_libraries( NaiSys-HttpServer-Bin
     PRIVATE Qt6::Core
     PRIVATE Qt6::Network
