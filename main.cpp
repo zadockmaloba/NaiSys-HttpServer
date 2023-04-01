@@ -1,3 +1,9 @@
+/**
+ *  Server Executable main file
+ *  Zadock Maloba <zadockmaloba@outlook.com>, 2023
+ *
+*/
+
 #include <QCoreApplication>
 #include <QJsonObject>
 #include <QJsonArray>
