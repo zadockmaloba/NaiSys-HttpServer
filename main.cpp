@@ -14,23 +14,25 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QString ver = "NaiSys-HttpServer_v0.1.0";
-    qDebug() << ver;
+
+    auto const ver = "NaiSys-HttpServer_v0.1.0";
+
     NaiSys::SystemConfig::setRootFolderName(ver);
     if(!NaiSys::SystemConfig::checkForConfigFile()){
-        NaiSys::SystemConfig::insertToConfigFile
-                ("Enabled-Sites", QJsonArray{
-                     QJsonObject{
-                         {"Name", "default-site"},
-                         {"Port", 1234},
-                         {"Address", "localhost"},
-                         {"Ssl", false},
-                         {"Ssl-Cert", ""},
-                         {"Ssl-Key", ""},
-                         {"Entry-Script", "default.nsl"},
-                         {"Site-Dir", NaiSys::SystemConfig::getRootApplicationFolder()}
-                     }
-                 });
+        NaiSys::SystemConfig::insertToConfigFile(
+            "Enabled-Sites", QJsonArray{
+             QJsonObject{
+                 {"Name", "default-site"},
+                 {"Port", 1234},
+                 {"Address", "localhost"},
+                 {"Ssl", false},
+                 {"Ssl-Cert", ""},
+                 {"Ssl-Key", ""},
+                 {"Entry-Script", "default.nsl"},
+                 {"Site-Dir", NaiSys::SystemConfig::getRootApplicationFolder()}
+             }
+         }
+        );
     }
 
     auto const config = NaiSys::SystemConfig::readConfigFile();
@@ -38,16 +40,16 @@ int main(int argc, char *argv[])
     for(auto const &obj : config.value("Enabled-Sites").toArray().toVariantList()){
         auto const v =obj.toJsonObject();
         qDebug() << v.value("Name");
-        auto const serv = new NaiSys::NaiSysHttpServer();
+        auto const serv = new NaiSys::NaiSysHttpServer(&a);
         serv->setServerParams({
-                                  .Port = v.value("Port").toInt(1234),
-                                  .Ssl = v.value("Ssl").toBool(),
-                                  .Address = v.value("Address").toString(),
-                                  .Ssl_Cert = v.value("Ssl-Cert").toString(),
-                                  .Ssl_Key = v.value("Ssl-Key").toString(),
-                                  .Entry_Script = v.value("Entry-Script").toString(),
-                                  .Site_Dir = v.value("Site-Dir").toString()
-                              });
+              .Port = v.value("Port").toInt(1234),
+              .Ssl = v.value("Ssl").toBool(),
+              .Address = v.value("Address").toString(),
+              .Ssl_Cert = v.value("Ssl-Cert").toString(),
+              .Ssl_Key = v.value("Ssl-Key").toString(),
+              .Entry_Script = v.value("Entry-Script").toString(),
+              .Site_Dir = v.value("Site-Dir").toString()
+          });
         serv->startServer();
     }
 
