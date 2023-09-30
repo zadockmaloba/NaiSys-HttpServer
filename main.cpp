@@ -20,19 +20,15 @@ int main(int argc, char *argv[])
     NaiSys::SystemConfig::setRootFolderName(ver);
     if(!NaiSys::SystemConfig::checkForConfigFile()){
         NaiSys::SystemConfig::insertToConfigFile(
-            "Enabled-Sites", QJsonArray{
-             QJsonObject{
-                 {"Name", "default-site"},
-                 {"Port", 1234},
-                 {"Address", "localhost"},
-                 {"Ssl", false},
-                 {"Ssl-Cert", ""},
-                 {"Ssl-Key", ""},
-                 {"Entry-Script", "default.nsl"},
-                 {"Site-Dir", NaiSys::SystemConfig::getRootApplicationFolder()}
-             }
-         }
-        );
+            "Enabled-Sites",
+            QJsonArray{QJsonObject{{"Name", "default-site"},
+                                   {"Port", 1234},
+                                   {"Address", "0.0.0.0"},
+                                   {"Ssl", false},
+                                   {"Ssl-Cert", ""},
+                                   {"Ssl-Key", ""},
+                                   {"Entry-Script", "default.nsl"},
+                                   {"Site-Dir", NaiSys::SystemConfig::getRootApplicationFolder()}}});
     }
 
     auto const config = NaiSys::SystemConfig::readConfigFile();
