@@ -9,7 +9,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.2 COMPONENTS Core Network Sql REQUIRED)
 
-add_subdirectory(NaiSys-DesktopUtils)
+add_subdirectory(NaiSys-DesktopUtils/LibHttp)
+add_subdirectory(NaiSys-DesktopUtils/LibServerLang)
+add_subdirectory(NaiSys-DesktopUtils/LibJson)
+add_subdirectory(NaiSys-DesktopUtils/LibSettings)
+add_subdirectory(NaiSys-DesktopUtils/LibConsole)
+add_subdirectory(NaiSys-DesktopUtils/LibSql)
 
 qt_add_executable( NaiSys-HttpServer-Bin
     main.cpp
